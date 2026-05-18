@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import logging
 import os
+import random
 import sys
 
 import simpy
@@ -90,6 +91,7 @@ def run_simulation(cfg: SimConfig) -> tuple:
 
     logging.info(
         f"Starting simulation: {total_nodes} nodes, "
+        f"seed={cfg.seed}, "
         f"duration={cfg.sim_duration}s, "
         f"loss={cfg.loss_probability:.0%}, "
         f"trickle={'on' if cfg.use_trickle else 'off'}, "
@@ -158,7 +160,9 @@ def parse_args() -> SimConfig:
     p.add_argument("--range", dest="radio_range", type=float, default=35.0)
     p.add_argument("--loss", type=float, default=0.0)
     p.add_argument("--duration", type=float, default=300.0)
-    p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--seed", type=int, default=random.randrange(1_000_000),
+                   help="Random seed (default: random each run; "
+                        "pass a fixed value to reproduce a topology)")
     p.add_argument("--ocp", type=int, choices=[0, 1], default=0,
                    help="Objective Code Point: 0=OF0, 1=MRHOF")
     p.add_argument("--no-trickle", action="store_true",
